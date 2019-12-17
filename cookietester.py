@@ -13,10 +13,11 @@ def cookie_business():
     lax_mode = request.cookies.get('lax_mode')
     none_mode = request.cookies.get('none_mode')
     not_set = request.cookies.get('not_set')
+    no_cookie_msg = 'No cookie found, trying to set it'
     cookies = {
-        'none': none_mode if none_mode else 'not set, setting it',
-        'lax': lax_mode if lax_mode else 'not set, setting it',
-        'not_set': not_set if not_set else 'not set, setting it'
+        'none': none_mode if none_mode else no_cookie_msg,
+        'lax': lax_mode if lax_mode else no_cookie_msg,
+        'not_set': not_set if not_set else no_cookie_msg
     }
     resp = make_response( render_template ('cookies.html', cookies = cookies ) )
     inc_cookie(resp, 'none_mode', none_mode, 'None')

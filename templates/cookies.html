@@ -1,18 +1,54 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Cookie Tester</title>
+        <title>IFrame Tester</title>
+        <script>
+            function init() {
+                incStorage(sessionStorage, 'sessionstorage');
+                incStorage(localStorage, 'localstorage');
+            }
+            function incStorage(storage, el) {
+                var val = storage.getItem('testitem');
+                if (val) {
+                    document.getElementById(el).innerHTML=val;
+                    val++;
+                } else {
+                    val = 1;
+                }
+                storage.setItem('testitem', val)
+            }
+            function clearStorage() {
+                sessionStorage.clear()
+                localStorage.clear()
+                document.getElementById('sessionstorage').innerHTML = ''
+                document.getElementById('localstorage').innerHTML = ''
+            }
+        </script>
     </head>
-    <body>
-        <h1>Cookie Tester</h1>
+    <body onload="init();">
+        <div>
+        <h2>Cookie Tester</h2>
+        <p>Page tries to set cookie; If cookie is present, cookie value is incremented.</p>
         <p>
-            same site not set: {{ cookies.not_set}} 
+            SameSite not set: {{ cookies.not_set}} 
         </p>
         <p>
-            same site none: {{ cookies.none}} 
+            SameSite None: {{ cookies.none}} 
         </p>
         <p>
-            same site lax: {{ cookies.lax}} 
+            SameSite Lax: {{ cookies.lax}} 
         </p>
+        </div>
+        <div>
+            <h2>Local Storage</h2>
+            <p>Page tries to set local storage value; If value is present, it is incremented.</p>
+            <p>Session Storage: <span id='sessionstorage'>No value found, trying to set it</span></p>
+            <p>Local Storage: <span id='localstorage'>No value found, trying to set it</span></p>
+            <button onclick="clearStorage();">Clear Local Storage</button>
+
+        </div>
+        <div>
+            <button onclick="window.location.reload();">Reload page</button>
+        </div>
     </body>
 </html>
