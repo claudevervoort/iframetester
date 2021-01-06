@@ -6,23 +6,22 @@ def inc_cookie(resp, key, val, samesite):
     # This version of werkzeug does not contain the fix to handle None so going manual
     # resp.set_cookie(key, str(val), samesite=samesite)
     samesite_str = f';SameSite={samesite}' if samesite else ''
-    resp.headers.add('Set-Cookie', f"{key}={str(val)}{samesite_str}")
+    resp.headers.add('Set-Cookie', f"{key}={str(val)}{samesite_str};Path=/;Secure;HttpOnly")
     
 @app.route('/')
-def cookie_business():
-    lax_mode = request.cookies.get('lax_mode')
-    none_mode = request.cookies.get('none_mode')
-    not_set = request.cookies.get('not_set')
-    no_cookie_msg = 'No cookie found, trying to set it'
-    cookies = {
-        'none': none_mode if none_mode else no_cookie_msg,
-        'lax': lax_mode if lax_mode else no_cookie_msg,
-        'not_set': not_set if not_set else no_cookie_msg
-    }
-    resp = make_response( render_template ('cookies.html', cookies = cookies ) )
-    inc_cookie(resp, 'none_mode', none_mode, 'None')
-    inc_cookie(resp, 'not_set', not_set, None)
-    inc_cookie(resp, 'lax_mode', lax_mode, 'Lax')
+def welcome():
+    return make_response( render_template ('welcome.html' ) )
+
+@app.route('/page/<pagename>')
+def cookie_business(pagename):
+    resp = make_response( render_template ('cookies.html', cookies = request.cookies.items() ) )
+    for k, v in request.cookies.items():
+        if not pagename in k and '_SameSite_' in k:
+            inc_cookie(resp, k, v, 'Lax' if 'Lax' in k else 'None')
+    none_cookie_name = f'{pagename}_SameSite_None'
+    lax_cookie_name = f'{pagename}_SameSite_Lax'
+    inc_cookie(resp, none_cookie_name, request.cookies[none_cookie_name] if none_cookie_name in request.cookies else 0, 'None')
+    inc_cookie(resp, lax_cookie_name, request.cookies[lax_cookie_name] if lax_cookie_name in request.cookies else 0, 'Lax')
     return resp
 
 if __name__ == '__main__':
