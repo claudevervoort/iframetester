@@ -21,6 +21,10 @@
                 showStorageAccess();
             }
 
+            function popMeUpWelcome() {
+                window.open('/', 'popup');
+            }
+
             function popMeUp() {
                 window.open('/page/popup', 'popup');
             }
@@ -91,7 +95,8 @@
         </div>
         <div>
             <button onclick="window.location.reload();">Reload page</button>
-            <button onclick="popMeUp();">Pop me Up!</button>
+            <button onclick="popMeUp();">Pop me Up to cookie page!</button>
+            <button onclick="popMeUpWelcome();">Pop me Up to Welcome page!</button>
         </div>
     </body>
 </html>
